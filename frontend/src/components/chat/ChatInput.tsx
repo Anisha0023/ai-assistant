@@ -1,12 +1,15 @@
 import { Paperclip, ArrowUp } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 function ChatInput({
 	handleSendMessage,
+	message,
+	setMessage,
 }: {
 	handleSendMessage: (message: string) => void;
+	message: string;
+	setMessage: (message: string) => void;
 }) {
-	const [message, setMessage] = useState('');
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
@@ -16,6 +19,18 @@ function ChatInput({
 		el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
 	}, [message]);
 
+	const handleEnterPress = (
+		event: React.KeyboardEvent<HTMLTextAreaElement>,
+	) => {
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault();
+
+			if (message.trim().length > 0) {
+				handleSendMessage(message);
+			}
+		}
+	};
+
 	return (
 		<div className="mt-7 rounded-2xl border border-[#20241F]/12 bg-[#FCFBF8] p-3 shadow-[0_1px_0_rgba(32,36,31,0.04)] focus-within:border-[#2F6F62]/50">
 			<textarea
@@ -24,6 +39,7 @@ function ChatInput({
 				onChange={(e) => setMessage(e.target.value)}
 				placeholder="Message Sable..."
 				rows={1}
+				onKeyDown={handleEnterPress}
 				className="max-h-[200px] w-full resize-none bg-transparent text-[15px] leading-relaxed text-[#20241F] placeholder:text-[#20241F]/40 focus:outline-none"
 			/>
 			<div className="mt-2 flex items-center justify-between">

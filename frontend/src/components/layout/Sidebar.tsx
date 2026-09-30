@@ -5,7 +5,6 @@ import {
 	Search,
 	Settings,
 } from 'lucide-react';
-import { useState } from 'react';
 
 interface ChatHistoryItem {
 	id: string;
@@ -30,8 +29,13 @@ const HISTORY: ChatHistoryItem[] = [
 	{ id: '6', title: 'Summarizing the research paper', timeLabel: '7 days ago' },
 ];
 
-function Sidebar() {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+function Sidebar({
+	sidebarOpen,
+	setSidebarOpen,
+}: {
+	sidebarOpen: boolean;
+	setSidebarOpen: (open: boolean) => void;
+}) {
 	return (
 		<aside
 			className={`${

@@ -7,16 +7,21 @@ const MODELS = [
 	'Sable Pro — deep reasoning',
 ];
 
-function ChatHeader() {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+function ChatHeader({
+	isSidebarOpen,
+	toggleSidebar,
+}: {
+	isSidebarOpen: boolean;
+	toggleSidebar: () => void;
+}) {
 	const [modelOpen, setModelOpen] = useState(false);
 	const [model, setModel] = useState(MODELS[0]);
 	return (
 		<header className="flex items-center justify-between px-5 py-4">
 			<div className="flex items-center gap-3">
-				{!sidebarOpen && (
+				{!isSidebarOpen && (
 					<button
-						onClick={() => setSidebarOpen(true)}
+						onClick={toggleSidebar}
 						className="rounded-md p-1.5 text-[#20241F]/50 hover:bg-[#20241F]/5 hover:text-[#20241F]"
 						aria-label="Expand sidebar">
 						<PanelLeft size={16} />

@@ -8,7 +8,7 @@ function AppLayout() {
 
 	const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 	return (
-		<div className="flex h-screen w-screen overflow-hidden">
+		<div className="flex h-screen overflow-hidden">
 			<Sidebar
 				sidebarOpen={sidebarOpen}
 				setSidebarOpen={setSidebarOpen}

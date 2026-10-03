@@ -6,6 +6,25 @@ interface Suggestion {
 	detail: string;
 }
 
+const SUGGESTIONS: Suggestion[] = [
+	{
+		label: 'Draft',
+		detail: 'a follow-up email after a client meeting',
+	},
+	{
+		label: 'Explain',
+		detail: 'how database indexes speed up queries',
+	},
+	{
+		label: 'Plan',
+		detail: 'a two-week onboarding schedule for a new hire',
+	},
+	{
+		label: 'Debug',
+		detail: 'why my React state update runs twice',
+	},
+];
+
 function ChatWorkspace() {
 	const [message, setMessage] = useState('');
 	const greetingHour = new Date().getHours();
@@ -44,14 +63,15 @@ function ChatWorkspace() {
 
 			{/* Suggestions */}
 			<div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-				{message && (
+				{SUGGESTIONS.map((s, index) => (
 					<button
-						key={message}
-						onClick={() => applySuggestion({ label: message, detail: message })}
+						key={index}
+						onClick={() => applySuggestion(s)}
 						className="flex items-baseline gap-1.5 rounded-lg border border-[#20241F]/10 px-3.5 py-2.5 text-left text-[13px] hover:border-[#2F6F62]/40 hover:bg-[#2F6F62]/[0.04]">
-						<span className="truncate text-[#20241F]/50">{message}</span>
+						<span className="font-medium text-[#20241F]/85">{s.label}</span>
+						<span className="truncate text-[#20241F]/50">{s.detail}</span>
 					</button>
-				)}
+				))}
 			</div>
 		</div>
 	);

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import ChatInput from '../components/chat/ChatInput';
-import ChatMessage, { type Message } from '../components/chat/ChatMessage';
+import ChatInput from '../features/chat/ChatInput';
+import ChatMessage, { type Message } from '../features/chat/ChatMessage';
+import { ChatService } from '../services/chat';
 
 interface Suggestion {
 	label: string;
@@ -59,17 +60,34 @@ function ChatWorkspace() {
 		// TODO: replace this timeout with your real API call.
 		// On success: append the assistant message, then setIsQuerying(false).
 		// On error: setIsQuerying(false) and show an error message.
-		timeoutRef.current = setTimeout(() => {
+		// timeoutRef.current = setTimeout(() => {
+		// 	setMessages((prev) => [
+		// 		...prev,
+		// 		{
+		// 			id: crypto.randomUUID(),
+		// 			role: 'assistant',
+		// 			content: `You asked: "${trimmed}"`,
+		// 		},
+		// 	]);
+		// 	setIsQuerying(false);
+		// }, 1500);
+		console.log(text);
+		try {
+			const res = ChatService.createChat({ message: text });
+			console.log(res?.data?.response);
 			setMessages((prev) => [
 				...prev,
 				{
 					id: crypto.randomUUID(),
 					role: 'assistant',
-					content: `You asked: "${trimmed}"`,
+					content: res?.data?.response,
 				},
 			]);
+		} catch (e) {
+			console.log('error', e);
+		} finally {
 			setIsQuerying(false);
-		}, 1500);
+		}
 	};
 
 	return (

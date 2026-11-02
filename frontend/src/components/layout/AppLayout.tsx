@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
-import ChatHeader from '../chat/ChatHeader';
+import ChatHeader from '../../features/chat/ChatHeader';
 
 function AppLayout() {
 	const [sidebarOpen, setSidebarOpen] = useState(true);

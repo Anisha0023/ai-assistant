@@ -1,4 +1,3 @@
-import base64
 import os
 from google import genai
 
@@ -32,6 +31,6 @@ def generate_response(prompt:str)->str:
      except LLMProviderError:
          raise
      except Exception as exe:
-         raise LLMProviderError("Failed to generate response from model",exe) from exe
+         raise LLMProviderError("Failed to generate response from model") from exe
           
 

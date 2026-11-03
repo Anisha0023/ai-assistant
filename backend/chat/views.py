@@ -1,8 +1,6 @@
 import logging
 
-from django.shortcuts import render
-from sqlalchemy import null
-from rest_framework.decorators import api_view  # http methoa access
+from rest_framework.decorators import api_view  # http methoda access
 from rest_framework.response import Response  # response data
 from rest_framework import status   # response status (400,404 etc..)
 

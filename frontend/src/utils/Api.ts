@@ -9,7 +9,6 @@ export const API = axios.create({
 
 API.interceptors.request.use(
 	(request) => {
-		request.headers['Accept'] = 'application/json';
 		return request;
 	},
 	(error) => Promise.reject(error),

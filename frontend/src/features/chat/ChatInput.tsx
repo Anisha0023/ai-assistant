@@ -42,12 +42,12 @@ function ChatInput({
 				onKeyDown={handleEnterPress}
 				className="max-h-[200px] w-full resize-none bg-transparent text-[15px] leading-relaxed text-[#20241F] placeholder:text-[#20241F]/40 focus:outline-none"
 			/>
-			<div className="mt-2 flex items-center justify-between">
-				<button
+			<div className="mt-2 flex items-center justify-end">
+				{/* <button
 					className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[#20241F]/45 hover:bg-[#20241F]/5 hover:text-[#20241F]/70"
 					aria-label="Attach file">
 					<Paperclip size={16} />
-				</button>
+				</button> */}
 				<button
 					onClick={() => {
 						handleSendMessage(message);

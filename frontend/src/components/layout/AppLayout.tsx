@@ -1,26 +1,27 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { useState } from 'react';
 import ChatHeader from '../../features/chat/ChatHeader';
+import { useSidebar } from '../../hooks/useSidebar';
 
 function AppLayout() {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const { sidebarOpen, setSidebarOpen } = useSidebar();
 
-	const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 	return (
-		<div className="flex h-screen overflow-hidden">
+		<div className="flex h-dvh overflow-hidden bg-[#F6F5F0] font-sans text-[#20241F] antialiased">
 			<Sidebar
 				sidebarOpen={sidebarOpen}
 				setSidebarOpen={setSidebarOpen}
 			/>
 
-			<div className="flex flex-1 flex-col overflow-hidden transition-all duration-300 bg-[#F6F5F0]">
+			<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
 				<ChatHeader
 					isSidebarOpen={sidebarOpen}
-					toggleSidebar={toggleSidebar}
+					toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
 				/>
 
-				<main className="flex-1 overflow-y-auto p-6">{<Outlet />}</main>
+				<main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+					<Outlet />
+				</main>
 			</div>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import { PanelLeft, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const MODELS = [
 	'Sable — balanced',
@@ -16,8 +16,21 @@ function ChatHeader({
 }) {
 	const [modelOpen, setModelOpen] = useState(false);
 	const [model, setModel] = useState(MODELS[0]);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!modelOpen) return;
+		const onPointerDown = (event: PointerEvent) => {
+			if (!menuRef.current?.contains(event.target as Node)) {
+				setModelOpen(false);
+			}
+		};
+		window.addEventListener('pointerdown', onPointerDown);
+		return () => window.removeEventListener('pointerdown', onPointerDown);
+	}, [modelOpen]);
+
 	return (
-		<header className="flex items-center justify-between px-5 py-4">
+		<header className="flex shrink-0 items-center justify-between px-5 py-3">
 			<div className="flex items-center gap-3">
 				{!isSidebarOpen && (
 					<button
@@ -27,7 +40,9 @@ function ChatHeader({
 						<PanelLeft size={16} />
 					</button>
 				)}
-				<div className="relative">
+				<div
+					className="relative"
+					ref={menuRef}>
 					<button
 						onClick={() => setModelOpen((v) => !v)}
 						className="flex items-center gap-1.5 rounded-full border border-[#20241F]/12 px-3 py-1.5 text-[13px] text-[#20241F]/75 hover:border-[#20241F]/25">

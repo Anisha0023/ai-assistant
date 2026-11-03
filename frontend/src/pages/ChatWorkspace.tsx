@@ -26,123 +26,135 @@ function ChatWorkspace() {
 	const [message, setMessage] = useState('');
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [isQuerying, setIsQuerying] = useState(false);
-	const bottomRef = useRef<HTMLDivElement>(null);
-	const timeoutRef = useRef<ReturnType<typeof setTimeout>>(
-		'' as unknown as ReturnType<typeof setTimeout>,
-	);
 
+	const messagesContainerRef = useRef<HTMLDivElement>(null);
 	const greeting = getGreeting(new Date().getHours());
 	const hasMessages = messages.length > 0;
 
-	// Keep the newest message / thinking indicator in view
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-	}, [messages, isQuerying]);
+		const container = messagesContainerRef.current;
+		if (!container) return;
 
-	// Clean up the fake request if the component unmounts
-	useEffect(() => () => clearTimeout(timeoutRef.current), []);
+		container.scrollTo({
+			top: container.scrollHeight,
+			behavior: 'smooth',
+		});
+	}, [messages, isQuerying]);
 
 	const applySuggestion = (s: Suggestion) => {
 		setMessage(`${s.label} ${s.detail}`);
 	};
 
-	const handleSendMessage = (text: string) => {
+	const handleSendMessage = async (text: string) => {
 		const trimmed = text.trim();
+
 		if (!trimmed || isQuerying) return;
 
 		setMessages((prev) => [
 			...prev,
-			{ id: crypto.randomUUID(), role: 'user', content: trimmed },
+			{
+				id: crypto.randomUUID(),
+				role: 'user',
+				content: trimmed,
+			},
 		]);
+
 		setMessage('');
 		setIsQuerying(true);
 
-		// TODO: replace this timeout with your real API call.
-		// On success: append the assistant message, then setIsQuerying(false).
-		// On error: setIsQuerying(false) and show an error message.
-		// timeoutRef.current = setTimeout(() => {
-		// 	setMessages((prev) => [
-		// 		...prev,
-		// 		{
-		// 			id: crypto.randomUUID(),
-		// 			role: 'assistant',
-		// 			content: `You asked: "${trimmed}"`,
-		// 		},
-		// 	]);
-		// 	setIsQuerying(false);
-		// }, 1500);
-		console.log(text);
 		try {
-			const res = ChatService.createChat({ message: text });
-			console.log(res?.data?.response);
+			const res = await ChatService.createChat({
+				message: trimmed,
+			});
+
+			const response = res?.data?.response;
+
+			if (typeof response !== 'string' || !response.trim()) {
+				throw new Error('Received an empty response.');
+			}
+
 			setMessages((prev) => [
 				...prev,
 				{
 					id: crypto.randomUUID(),
 					role: 'assistant',
-					content: res?.data?.response,
+					content: response,
 				},
 			]);
-		} catch (e) {
-			console.log('error', e);
+		} catch (error) {
+			console.error('Chat request failed:', error);
+
+			setMessages((prev) => [
+				...prev,
+				{
+					id: crypto.randomUUID(),
+					role: 'assistant',
+					content:
+						'Something went wrong. Please try sending your message again.',
+				},
+			]);
 		} finally {
 			setIsQuerying(false);
 		}
 	};
 
 	return (
-		<div
-			className={`flex w-full max-w-2xl flex-col ${hasMessages ? 'h-screen' : ''}`}>
-			{/* Empty state: greeting */}
-			{!hasMessages && (
-				<h1 className="font-serif text-[32px] leading-tight text-[#20241F] sm:text-[38px]">
-					{greeting} What are you working on?
-				</h1>
-			)}
+		<div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+			<div
+				ref={messagesContainerRef}
+				className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col overflow-y-auto overscroll-contain px-6">
+				{!hasMessages ? (
+					<div className="flex min-h-0 flex-1 flex-col justify-center ">
+						<h1 className="font-serif text-[32px] leading-tight text-[#20241F] sm:text-[38px]">
+							{greeting} What are you working on?
+						</h1>
 
-			{/* Conversation state: scrollable thread */}
-			{hasMessages && (
-				<div className="flex-1 space-y-6 overflow-y-auto py-6">
-					{messages.map((m) => (
-						<ChatMessage
-							key={m.id}
-							role={m.role}
-							content={m.content}
-						/>
-					))}
-					{isQuerying && (
-						<ChatMessage
-							role="assistant"
-							isThinking
-						/>
-					)}
-					<div ref={bottomRef} />
-				</div>
-			)}
+						<div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+							{SUGGESTIONS.map((s) => (
+								<button
+									key={s.label}
+									type="button"
+									onClick={() => applySuggestion(s)}
+									className="flex min-w-0 items-baseline gap-1.5 rounded-lg border border-[#20241F]/10 px-3.5 py-2.5 text-left text-[13px] transition-colors hover:border-[#2F6F62]/40 hover:bg-[#2F6F62]/[0.04]">
+									<span className="shrink-0 font-medium text-[#20241F]/85">
+										{s.label}
+									</span>
+									<span className="truncate text-[#20241F]/50">
+										{s.detail}
+									</span>
+								</button>
+							))}
+						</div>
+					</div>
+				) : (
+					<div className="min-h-0 flex-1 ">
+						<div className="space-y-6 py-4">
+							{messages.map((m) => (
+								<ChatMessage
+									key={m.id}
+									role={m.role}
+									content={m.content}
+								/>
+							))}
 
-			{/* Input: same slot in both states, so it keeps focus and its text */}
-			<div className={hasMessages ? 'pb-4' : ''}>
+							{isQuerying && (
+								<ChatMessage
+									role="assistant"
+									isThinking
+								/>
+							)}
+						</div>
+					</div>
+				)}
+			</div>
+
+			<div className="mx-auto w-full max-w-3xl shrink-0 px-6 pb-2 pt-3">
 				<ChatInput
 					handleSendMessage={handleSendMessage}
 					message={message}
 					setMessage={setMessage}
 				/>
 			</div>
-
-			{/* Empty state: suggestions */}
-			{!hasMessages && (
-				<div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-					{SUGGESTIONS.map((s) => (
-						<button
-							key={s.label}
-							onClick={() => applySuggestion(s)}
-							className="flex items-baseline gap-1.5 rounded-lg border border-[#20241F]/10 px-3.5 py-2.5 text-left text-[13px] hover:border-[#2F6F62]/40 hover:bg-[#2F6F62]/[0.04]">
-							<span className="font-medium text-[#20241F]/85">{s.label}</span>
-							<span className="truncate text-[#20241F]/50">{s.detail}</span>
-						</button>
-					))}
-				</div>
-			)}
 		</div>
 	);
 }

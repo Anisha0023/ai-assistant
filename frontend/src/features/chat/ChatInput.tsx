@@ -32,7 +32,7 @@ function ChatInput({
 	};
 
 	return (
-		<div className="mt-7 rounded-2xl border border-[#20241F]/12 bg-[#FCFBF8] p-3 shadow-[0_1px_0_rgba(32,36,31,0.04)] focus-within:border-[#2F6F62]/50">
+		<div className="rounded-2xl border border-[#20241F]/12 bg-[#FCFBF8] p-3 shadow-[0_1px_0_rgba(32,36,31,0.04)] focus-within:border-[#2F6F62]/50">
 			<textarea
 				ref={textareaRef}
 				value={message}

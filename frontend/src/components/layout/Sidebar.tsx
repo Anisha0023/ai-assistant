@@ -109,14 +109,17 @@ function Sidebar({
 					</div>
 
 					<div className="mt-4 px-3">
-						<div className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-[#20241F]/45">
-							<Search size={14} />
+						<label className="flex items-center gap-2 rounded-lg bg-[#20241F]/[0.04] px-3 py-2 text-[#20241F]/45">
+							<Search
+								size={14}
+								className="shrink-0"
+							/>
 							<input
-								type="text"
+								type="search"
 								placeholder="Search chats"
 								className="w-full bg-transparent text-[13px] placeholder:text-[#20241F]/40 focus:outline-none"
 							/>
-						</div>
+						</label>
 					</div>
 
 					<nav className="mt-3 flex-1 overflow-y-auto px-3 pb-3">
